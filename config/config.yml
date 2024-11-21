@@ -1,0 +1,28 @@
+server:
+  internalPort: 2000
+  externalPort: 2020
+  #  runMode: release
+  runMode: debug
+
+logger:
+  filePath: ../logs/
+  encoding: json
+  level: debug
+  logger: zerolog
+
+postgres:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: admin
+  dbName: menu_yar
+  sslMode: disable
+  maxIdleConnections: 15
+  maxOpenConnections: 100
+  connectionMaxLifetime: 5
+
+cors:
+  allowOrigins: "*"
+
+telegram:
+  token: "7884113459:AAFt5uUWGalD4lpHZV7UDgCGlLVirUlbipc"
