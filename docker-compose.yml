@@ -34,19 +34,19 @@ services:
     depends_on:
       - postgres
 
-  telegram-bot:
-    build: ./
-    image: qw1:latest
-    container_name: quera_telegram_bot
-    environment:
-      - PORT=8083
-    ports:
-      - 8083:8083
-    networks:
-      - quera_network
-    depends_on:
-      - postgres
-    restart: unless-stopped
+#  telegram-bot:
+#    build: ./
+#    image: qw1:latest
+#    container_name: quera_telegram_bot
+#    environment:
+#      - PORT=8083
+#    ports:
+#      - 8083:8083
+#    networks:
+#      - quera_network
+#    depends_on:
+#      - postgres
+#    restart: unless-stopped
 
 ####################### VOLUME AND NETWORKS #######################
 volumes:
