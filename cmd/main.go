@@ -14,7 +14,7 @@ func main() {
 	fmt.Println("Running the Quera_webinar_bot . . . \n")
 
 	cfg := config.GetConfig()
-	fmt.Println("Config file was imported : ", cfg)
+	fmt.Println("Config file was imported ")
 
 	err := database.SetupDb(cfg)
 	defer database.CloseDb()
@@ -34,5 +34,6 @@ func main() {
 	defer telegram.CloseBot()
 
 	bot := telegram.GetBot()
-	usecase.BotMain(bot)
+	bmc := usecase.NewBotMainController(cfg, bot)
+	bmc.SetupBot()
 }
