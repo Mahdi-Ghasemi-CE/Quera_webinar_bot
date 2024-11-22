@@ -13,9 +13,9 @@ logger:
 postgres:
   host: localhost
   port: 5432
-  user: postgres
-  password: admin
-  dbName: q_bot
+  user: postgresAdmin
+  password: postgres1234quera$
+  dbName: quera_telegram_bot
   sslMode: disable
   maxIdleConnections: 15
   maxOpenConnections: 100

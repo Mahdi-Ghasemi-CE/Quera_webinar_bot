@@ -1,0 +1,58 @@
+version: '3.7'
+
+services:
+  ####################### POSTGRES #######################
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgresAdmin
+      POSTGRES_PASSWORD: postgres1234quera$
+      POSTGRES_DB: quera_telegram_bot
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_data:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - quera_network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: mahdighasemi.ce99@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: mghi@8131
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8093:80"
+    networks:
+      - quera_network
+    restart: unless-stopped
+    depends_on:
+      - postgres
+
+  telegram-bot:
+    build: ./
+    image: qw1:latest
+    container_name: quera_telegram_bot
+    environment:
+      - PORT=8083
+    ports:
+      - 8083:8083
+    networks:
+      - quera_network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+####################### VOLUME AND NETWORKS #######################
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  quera_network:
+    driver: bridge
