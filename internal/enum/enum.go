@@ -4,10 +4,10 @@ type Commands string
 
 const (
 	Start            Commands = "/start"
-	Help             Commands = "/Help"
-	AdminReport      Commands = "/AdminReport"
-	AwaitingPassword Commands = "/AwaitingPassword"
-	AdminLoggedIn    Commands = "/AdminLoggedIn"
+	Help             Commands = "/help"
+	AdminReport      Commands = "/adminreport"
+	AwaitingPassword Commands = "/awaitingpassword"
+	AdminLoggedIn    Commands = "/adminloggedIn"
 )
 
 type QueryOperation string

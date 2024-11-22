@@ -42,7 +42,8 @@ type PostgresConfig struct {
 }
 
 type TelegramConfig struct {
-	Token string
+	Token     string
+	AdminPass string
 }
 
 type CorsConfig struct {

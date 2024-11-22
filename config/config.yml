@@ -11,7 +11,7 @@ logger:
   logger: zerolog
 
 postgres:
-  host: localhost
+  host: 185.215.244.211
   port: 5432
   user: postgresAdmin
   password: postgres1234quera$
@@ -26,3 +26,4 @@ cors:
 
 telegram:
   token: "7884113459:AAFt5uUWGalD4lpHZV7UDgCGlLVirUlbipc"
+  adminPass: "amir.Delgarm@3041.quera"

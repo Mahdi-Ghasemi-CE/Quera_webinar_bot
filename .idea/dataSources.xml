@@ -8,11 +8,11 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/q_bot</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="quera_telegram_bot@localhost" uuid="244e08dc-5ddf-4bd0-8b34-a0467aea691f">
+    <data-source source="LOCAL" name="quera_telegram_bot@185.215.244.211" uuid="0add9eda-529e-49ff-8057-ff59793586f6">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/quera_telegram_bot</jdbc-url>
+      <jdbc-url>jdbc:postgresql://185.215.244.211:5432/quera_telegram_bot</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

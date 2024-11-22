@@ -12,6 +12,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -37,49 +38,41 @@ func (bmc BotMainController) SetupBot() {
 	for update := range updates {
 		if update.Message != nil {
 			chatID := update.Message.Chat.ID
+			userInput := strings.ToLower(update.Message.Text) // Normalize input to lowercase
 
 			// Check the user's state and handle accordingly
 			switch userStates[chatID] {
 			case string(enum.AwaitingPassword):
-				fmt.Println("1")
 				// Handle login password
 				if bmc.loginAdmin(update) {
-					fmt.Println("2")
 					bmc.sendReport(update)
 					userStates[chatID] = string(enum.AdminLoggedIn)
 				} else {
-					fmt.Println("3")
 					// Keep the user in "awaiting_password" state for retry
 					userStates[chatID] = string(enum.AwaitingPassword)
 				}
 
 			case string(enum.AdminLoggedIn):
-				fmt.Println("4")
 				// Handle admin-specific commands after successful login
-				if update.Message.Text == string(enum.AdminReport) {
-					fmt.Println("5")
+				if userInput == string(enum.AdminReport) {
 					bmc.sendReport(update)
 				}
 
 			default:
 				// Handle general commands
-				if update.Message.Text == string(enum.Start) {
+				if userInput == string(enum.Start) {
 					bmc.start(update)
 				}
-				if update.Message.Text == string(enum.Help) {
+				if userInput == string(enum.Help) {
 					bmc.help(update)
 				}
 				if update.Message.Contact != nil {
 					bmc.saveContact(update)
 				}
-				if update.Message.Text == string(enum.AdminReport) {
-					fmt.Println("6")
-
+				if userInput == string(enum.AdminReport) {
 					// Start the login process
 					userStates[chatID] = string(enum.AwaitingPassword)
 					bmc.localBot.Send(tgbotapi.NewMessage(chatID, "لطفاً رمز عبور ادمین را وارد نمایید."))
-					fmt.Println(userStates[chatID])
-					fmt.Println("7")
 				}
 			}
 		}
@@ -87,9 +80,7 @@ func (bmc BotMainController) SetupBot() {
 }
 
 func (bmc BotMainController) sendReport(update tgbotapi.Update) {
-	fmt.Println("0")
 	users, _ := getAllUsers(bmc.db)
-	fmt.Println(users)
 	// Create an Excel file
 	f := excelize.NewFile()
 
@@ -99,19 +90,16 @@ func (bmc BotMainController) sendReport(update tgbotapi.Update) {
 		cell := fmt.Sprintf("%s1", string('A'+i))
 		f.SetCellValue("Sheet1", cell, header)
 	}
-	fmt.Println("00")
 
 	// Populate data rows
 	rowNum := 2
 	for i, user := range users {
-		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", rowNum), i)
+		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", rowNum), i+1)
 		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", rowNum), user.FirstName)
 		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", rowNum), user.LastName)
 		f.SetCellValue("Sheet1", fmt.Sprintf("D%d", rowNum), user.PhoneNumber)
 		rowNum++
 	}
-
-	fmt.Println("000")
 
 	// Save the Excel file to a temporary file
 	tempFile := "user_report.xlsx"
@@ -126,7 +114,6 @@ func (bmc BotMainController) sendReport(update tgbotapi.Update) {
 		log.Println("Error sending file:", err)
 		return
 	}
-	fmt.Println("0000")
 
 	// Optionally, you can remove the temporary file after sending it
 	if err := os.Remove(tempFile); err != nil {
@@ -157,8 +144,14 @@ func (bmc BotMainController) saveContact(update tgbotapi.Update) {
 			msg := "خطا در ذخیره اطلاعات لطفاً مجدد امتحان کن دوست من."
 			bmc.removeKeyboard(msg, update.Message.Chat.ID)
 		} else {
-			msg := "ثبت‌نامت با موفقیت انجام شد.\nوبینار روز یکشنبه ۱۱ آذر ماه برگزار می‌شه، که اطلاعات ورود از طریق پیامک بهت اطلاع رسانی می‌شه."
-			bmc.removeKeyboard(msg, update.Message.Chat.ID)
+			bmc.removeKeyboard("ثبت‌نامت با موفقیت انجام شد.", update.Message.Chat.ID)
+
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "وبینار روز یکشنبه ۱۱ آذر ماه برگزار می‌شه، که اطلاعات ورود از طریق پیامک بهت اطلاع رسانی می‌شه.")
+			msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonURL("مشاهده صفحه وبینار", "https://quera.org/r/0ub6e"),
+				))
+			bmc.localBot.Send(msg)
 		}
 	}
 }
@@ -194,7 +187,7 @@ func (bmc BotMainController) help(update tgbotapi.Update) {
 
 func (bmc BotMainController) loginAdmin(update tgbotapi.Update) bool {
 	// Predefined admin credentials
-	const adminPassword = "admin@3041" // Replace with a strong, secure password
+	var adminPassword = bmc.cfg.Telegram.AdminPass // Replace with a strong, secure password
 
 	// Validate that the update contains a message
 	if update.Message == nil || update.Message.Chat == nil {
